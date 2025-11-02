@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sanyukta Chapagain">
+
+<title>Differential Abundance anaysis – Differential Abundance Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a35d343c8bdbcb87d3b82ed68e48a46c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Differential Abundance anaysis</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Differential Abundance anaysis</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#differential-abudance-analysis-on-16s-rna-data-from-the-paper-nejman-et-al.-2020" id="toc-differential-abudance-analysis-on-16s-rna-data-from-the-paper-nejman-et-al.-2020" class="nav-link active" data-scroll-target="#differential-abudance-analysis-on-16s-rna-data-from-the-paper-nejman-et-al.-2020">Differential Abudance analysis on 16S RNA data from the Paper (Nejman et al., 2020)</a></li>
+  <li><a href="#what-is-differential-abundance-da-analysis" id="toc-what-is-differential-abundance-da-analysis" class="nav-link" data-scroll-target="#what-is-differential-abundance-da-analysis">1. What is Differential Abundance (DA) Analysis?</a></li>
+  <li><a href="#what-is-the-analysis-in-nejmans-paper" id="toc-what-is-the-analysis-in-nejmans-paper" class="nav-link" data-scroll-target="#what-is-the-analysis-in-nejmans-paper">2. What is the analysis in Nejman’s Paper ,</a></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">3 Workflow</a>
+  <ul class="collapse">
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">3.1 Data cleaning</a>
+  <ul class="collapse">
+  <li><a href="#splitting-into-clincal-and-prevalence-table" id="toc-splitting-into-clincal-and-prevalence-table" class="nav-link" data-scroll-target="#splitting-into-clincal-and-prevalence-table">3.1.01 Splitting into clincal and prevalence table</a></li>
+  <li><a href="#removing-bact-id-30000" id="toc-removing-bact-id-30000" class="nav-link" data-scroll-target="#removing-bact-id-30000">3.1.02 Removing Bact ID &gt;= 30,000</a></li>
+  <li><a href="#prevalence-filtering" id="toc-prevalence-filtering" class="nav-link" data-scroll-target="#prevalence-filtering">3.1.03 Prevalence filtering</a></li>
+  <li><a href="#format-coversion---into-relative-and-integer-count" id="toc-format-coversion---into-relative-and-integer-count" class="nav-link" data-scroll-target="#format-coversion---into-relative-and-integer-count">3.1.04 Format coversion - into relative and integer count</a></li>
+  </ul></li>
+  <li><a href="#cancer-specific-data-extraction" id="toc-cancer-specific-data-extraction" class="nav-link" data-scroll-target="#cancer-specific-data-extraction">3.2 Cancer specific data extraction</a>
+  <ul class="collapse">
+  <li><a href="#breast-cancer-data" id="toc-breast-cancer-data" class="nav-link" data-scroll-target="#breast-cancer-data">3.2.01 Breast Cancer data</a></li>
+  <li><a href="#creating-r-file-without-error-and-da-ready" id="toc-creating-r-file-without-error-and-da-ready" class="nav-link" data-scroll-target="#creating-r-file-without-error-and-da-ready">3.2.01 Creating R file without error and DA ready</a></li>
+  <li><a href="#confounding-factor-analysis" id="toc-confounding-factor-analysis" class="nav-link" data-scroll-target="#confounding-factor-analysis">3.2.02 Confounding factor analysis</a></li>
+  </ul></li>
+  <li><a href="#differential-abundance-analysis" id="toc-differential-abundance-analysis" class="nav-link" data-scroll-target="#differential-abundance-analysis">3.3 Differential Abundance Analysis</a>
+  <ul class="collapse">
+  <li><a href="#deseq2" id="toc-deseq2" class="nav-link" data-scroll-target="#deseq2">3.3.01 DESEq2</a></li>
+  <li><a href="#understanding-output" id="toc-understanding-output" class="nav-link" data-scroll-target="#understanding-output">Understanding output</a></li>
+  <li><a href="#maaslin2" id="toc-maaslin2" class="nav-link" data-scroll-target="#maaslin2">3.3.03 MaAsLin2</a></li>
+  </ul></li>
+  <li><a href="#statistical-framework" id="toc-statistical-framework" class="nav-link" data-scroll-target="#statistical-framework">Statistical Framework</a>
+  <ul class="collapse">
+  <li><a href="#misc-fixed-effect-and-random-effect" id="toc-misc-fixed-effect-and-random-effect" class="nav-link" data-scroll-target="#misc-fixed-effect-and-random-effect">Misc: Fixed effect and Random effect</a></li>
+  <li><a href="#aldex2" id="toc-aldex2" class="nav-link" data-scroll-target="#aldex2">3.3.03 ALDEx2</a></li>
+  <li><a href="#ancom-bc2" id="toc-ancom-bc2" class="nav-link" data-scroll-target="#ancom-bc2">3.3.04 ANCOM BC2</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Differential Abundance anaysis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sanyukta Chapagain </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="differential-abudance-analysis-on-16s-rna-data-from-the-paper-nejman-et-al.-2020" class="level2">
+<h2 class="anchored" data-anchor-id="differential-abudance-analysis-on-16s-rna-data-from-the-paper-nejman-et-al.-2020">Differential Abudance analysis on 16S RNA data from the Paper <a href="https://www.science.org/doi/10.1126/science.aay9189">(Nejman et al., 2020)</a></h2>
+</section>
+<section id="what-is-differential-abundance-da-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-differential-abundance-da-analysis">1. What is Differential Abundance (DA) Analysis?</h2>
+<p>Differential Abundance Analysis (DAA) is the use of various statistical methods to identify significant differences in the abundances of individual taxa between two or more comparison groups.</p>
+<p>Microbiome data possesses unique characteristics that contribute to the complexity of its analysis.To address these inherent data challenges, different DAA tools and packages operate based on distinct statistical assumptions or computational frameworks. The choice of package is therefore critical, as each is specifically designed to handle certain data features more effectively than others. Some of the data characteristics of a microbiome data includes:</p>
+<section id="a-compostionality" class="level4">
+<h4 class="anchored" data-anchor-id="a-compostionality">a) Compostionality:</h4>
+<p>Compositionality is the most important characteristic of microbiome data. The ASV/OTU count, which is the main input used in Differential Abundance (DA) analysis, represents <strong>relative abundance</strong>; that is, the count is proportional to the total number of sequencing reads (library size) per sample and not the true absolute count for that particular taxon. Consequently, an apparent increase in one taxon’s relative count naturally results in a decrease in the relative abundance of another taxon’s count. This is a significant problem because working solely with relative abundance often does not reflect the true absolute count of the species in our data and can therefore lead to a loss of biological significance..</p>
+</section>
+<section id="b-sparisty" class="level4">
+<h4 class="anchored" data-anchor-id="b-sparisty">b) Sparisty</h4>
+<p>Microbiome datasets feature a large number of taxa (OTUs/ASVs) compared to the smaller number of samples we work with, which impacts the statistical modeling as there are more features than samples. An important point to note about sparse data is that sometimes the taxon is genuinely <strong>not present</strong> (a structural zero), hence the count is zero, but sometimes the zero count could also be a technical error in the sequencing and the taxon was simply not detected because it had low abundance (a sampling zero).</p>
+</section>
+<section id="c-overdispersion" class="level4">
+<h4 class="anchored" data-anchor-id="c-overdispersion">c) Overdispersion</h4>
+<p>In the count data, the <strong>variance of counts</strong> for a given taxon is significantly larger than its mean. This characteristic is known as over-dispersion, which violates the assumptions of a simple distribution (like the Poisson distribution) often used in count data.</p>
+</section>
+</section>
+<section id="what-is-the-analysis-in-nejmans-paper" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-the-analysis-in-nejmans-paper">2. What is the analysis in Nejman’s Paper ,</h2>
+<p>The paper characterized the tumor-associated microbiome across 7 cancer types using the 16s rRNA sequencing and statistical diversity analysis by looking into the community difference through alpha and beta diveristy. They found out that breast cancer had the most diverse microbiome profile</p>
+<p>What I am doing in this analysis is re-analyzing the same dataset with four established DA methods - ALDEx2, ANCOM-II , DESeq2 and MaAsLin2. This will help identify taxa that differ significantly between tumor (T) vs Normal adjacent tumor (NAT). This will allow comparision of the DA tools and also study if these packages reproduce the study’s key finding that the breast tumor had the richest and most diverse microbiome profile.</p>
+<p>Our use of multiple differential abundance (DA) tools follows the <strong>consensus approach</strong> recommended by <a href="#0">(Nearing et al., 2022)</a>. In their study, the authors systematically evaluated 14 DA methods across 38 microbiome datasets and concluded that, because each method relies on different statistical assumptions, the results can vary substantially. Therefore, they recommended using a consensus strategy examining the overlapping significant features (ASVs) across multiple DA tools to obtain more reliable biological interpretations.n</p>
+<p>Based on these findings, we selected <strong>ALDEx2</strong> and <strong>ANCOM-II</strong>, which were identified as the <strong>most conservative and consistent</strong> tools, as well as <strong>MaAsLin2</strong> and <strong>DESeq2</strong>. Although <strong>DESeq2</strong> was originally designed for RNA-seq data and was reported by Nearing et al.&nbsp;to produce relatively higher false discovery rates (FDR) in microbiome applications, we included it for comparison because <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02104-1">(Calgaro et al., 2020)</a> found DESeq2 to be among the top-performing methods overall. Given this contrast in reported performance, including DESeq2 in our analysis allows us to evaluate how it behaves on this dataset relative to the other DA frameworks.</p>
+</section>
+<section id="workflow" class="level1">
+<h1>3 Workflow</h1>
+<p>The main data that we will be working with in this study is the supplementary table titled <strong>Table S2. Normalized reads of all samples in study with clinical data.</strong><em>.</em></p>
+<p><img src="images/clipboard-1108813451.png" class="img-fluid"></p>
+<p>This table is taken from Nejman et al.&nbsp;(2020) and contains the normalized read counts for all tumor and control samples along with their associated clinical information. Nejman’s study applied a six-stage filtering process to remove potential contaminants and batch-related artifacts; however, this version of Table S2 represents the data before any filtering was applied</p>
+<p>The table has two main sections. The upper part contains the clinical metadata for all samples in the study (such as sample ID, tissue type, patient information, sequencing batch, and clinical characteristics). The lower part contains the prevalence table for all taxa detected across samples, including their taxonomic classifications from domain down to species level.</p>
+<p>The row labeled “Total # normalized reads without general contaminants” represents the total normalized read count per sample <em>after</em> contamination filtering would be applied. However, in this table, the data are shown before filtering, meaning all reads are still included.</p>
+<section id="data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning">3.1 Data cleaning</h2>
+<section id="splitting-into-clincal-and-prevalence-table" class="level3">
+<h3 class="anchored" data-anchor-id="splitting-into-clincal-and-prevalence-table">3.1.01 Splitting into clincal and prevalence table</h3>
+<p>The first step in our analysis was splitting the table into a prevalence.csv and a clinical.csv file. In the clinical table, we added a new column called Barcodes, which represents the sequencing sample IDs. The Sample_ID (WIS) in the clinical data were numeric, while in the prevalence table, the sample IDs were in a format such as <code>2015-11-17 - Hiseq-4/BC11_GTATAACA</code>. We matched each barcode with its corresponding WIS Sample ID to ensure proper mapping and alignment between the two tables during the DA step.</p>
+</section>
+<section id="removing-bact-id-30000" class="level3">
+<h3 class="anchored" data-anchor-id="removing-bact-id-30000">3.1.02 Removing Bact ID &gt;= 30,000</h3>
+<p>In Table S2, at the bottom of the prevalence table, we had BactID values ≥ 30,000, which did not represent species-level data. The corresponding prevalence values for these rows represented higher taxonomic levels, such as genus or family. Therefore, all rows with BactID ≥ 30,000 were removed from the prevalence table, as they do not reflect species-level abundance and saving the file as prevalence_after_bactID_01.csv</p>
+</section>
+<section id="prevalence-filtering" class="level3">
+<h3 class="anchored" data-anchor-id="prevalence-filtering">3.1.03 Prevalence filtering</h3>
+<p>In this step, we removed species identified as likely contaminants from lab procedures. Low biomass tumor samples are prone to contamination from DNA extraction kits, PCR reagents, paraffin embedding, and other sources. Following the paper’s Filter 1 method, we removed any species that appeared in more than 7.5% of DNA extraction/NTC negative controls or more than 7.5% of paraffin embedding controls. These two values were found in the first two columns of the prevalence table, named “Prevalence in DNA extraction/NTC negative controls” and “Prevalence in Paraf. Controls.” The 7.5% threshold was chosen as the inflection point in the bimodal distribution, where species below this value were considered real detections and those above were likely contaminants. We converted the percentage strings to numeric values and applied an OR rule to remove species that exceeded 7.5% in either control type.</p>
+<p>After filtering, we removed 168 contaminant species out of 11,211 (1.5%) and kept 11,043 clean species (98.5%). The resulting table was saved as prevalence_no_contaminants_02.csv, which matches the 168 species reported as removed in Filter 1 of the paper.</p>
+</section>
+<section id="format-coversion---into-relative-and-integer-count" class="level3">
+<h3 class="anchored" data-anchor-id="format-coversion---into-relative-and-integer-count">3.1.04 Format coversion - into relative and integer count</h3>
+<p>The original Table S2 is described as the normalized reads of all samples in the study with clinical data. It also includes two rows named total normalized reads and total normalized reads without general contaminants. These rows summarize the overall read counts per sample but still include taxa with BactID values greater than 30,000, which are higher-level taxa (not species).</p>
+<p>Because of this, we did not use those total normalized read values directly. Instead, after filtering out all rows with BactID ≥ 30,000, we recalculated the total normalized reads for each sample using the filtered prevalence table. This allowed us to obtain accurate totals that represent only species-level data.</p>
+<p>From this recalculated data, we created two separate versions for different DA tools.</p>
+<p>For the <strong>integer count format</strong>, we rounded the normalized read values (floats) to the nearest whole number, since count-based tools like DESeq2 require integer inputs.</p>
+<p>For the <strong>relative abundance format</strong>, we divided each sample’s read values by its corresponding total normalized reads, producing proportions that sum to approximately 1.0 per sample.</p>
+<p>This conversion step was necessary because some DA tools operate on count data, while others are designed for compositional or relative abundance data. The files were saved as prevalence_relative_abundance_all_csv and prevalence_integer_counts_all.csv.</p>
+</section>
+</section>
+<section id="cancer-specific-data-extraction" class="level2">
+<h2 class="anchored" data-anchor-id="cancer-specific-data-extraction">3.2 Cancer specific data extraction</h2>
+<section id="breast-cancer-data" class="level3">
+<h3 class="anchored" data-anchor-id="breast-cancer-data">3.2.01 Breast Cancer data</h3>
+<section id="clincal-data" class="level4">
+<h4 class="anchored" data-anchor-id="clincal-data">Clincal data:</h4>
+<p>In this step, we extracted cancer-specific data for tumor and normal tissue comparisons. We selected three cancer types for the DA analysis: breast, ovary, and lung. The other cancers (melanoma, pancreas, GBM, and bone) were excluded because they lacked normal or NAT samples.</p>
+<p>For the breast dataset, we first extracted the breast-specific clinical data and saved it as <strong>breast_clinical.csv</strong>. We then created another file called <strong>breast_clinical_aligned.csv</strong>, which included the corresponding barcodes for each sample. The barcodes were extracted and matched with the Sample_ID (WIS) values to ensure that each sample in the clinical file correctly aligned with the sample IDs in the prevalence table. The alignment was performed using the Jupyter source file named <strong>alignment_breast.ipynb</strong>, from which the breast_clinical_aligned.csv file was generated. This files contains all breast cancer sample that is N , NAT and T. This alignment step ensured that the metadata and prevalence data were perfectly matched before performing any downstream analysis.</p>
+</section>
+<section id="prevalence-data-applying-3-prevalence-filtering" class="level4">
+<h4 class="anchored" data-anchor-id="prevalence-data-applying-3-prevalence-filtering">Prevalence data : Applying 3 % prevalence filtering</h4>
+<p>Nearing et al’s paper also recommneds applying a prevalence filtering of the data before we proceed to do a DA analysis. They tried it with a 10 % filtering , but because our data is a low biomass data , we only proceeded to use a 3% filtering threshold</p>
+<p>In this step, we performed cancer-specific prevalence filtering using the 3% threshold. From the prevalence table, we used the two files prevalence_relative_abundance_all.csv and prevalence_integer_counts_all.csv.</p>
+<p>From each of these, we extracted the breast cancer samples. After extracting the breast data for both relative and integer formats, we applied the 3% prevalence filtering, where a species had to be present in at least 3% of the samples to be kept. Once the filtering was applied, the resulting files were saved as breast_relative_filtered.csv and breast_integers_filtered.csv. This process was done using the Jupyter source file named <strong>breast_cancer_RandI.ipynb</strong>.</p>
+</section>
+</section>
+<section id="creating-r-file-without-error-and-da-ready" class="level3">
+<h3 class="anchored" data-anchor-id="creating-r-file-without-error-and-da-ready">3.2.01 Creating R file without error and DA ready</h3>
+<p>In this step, we prepared the breast cancer data for differential abundance analysis by creating standardized input files compatible with all DA tools. This was done using the Python script named prepare_DA_input.ipynb.</p>
+<p>From the previously filtered breast data, we kept only the Tumor and NAT samples and removed all other tissue types such as Normal and Fibroadenoma. This filtering was necessary because the DA analysis focuses on comparing Tumor vs NAT. We also analyzed possible confounding factors such as DNA extraction batch, sequencing center, and patient pairing, which are summarized in the DA_design_info.txt file.</p>
+<p>To make the dataset compatible with R, we created a new column called Sample_ID_clean. In the original dataset, sample names contained characters like spaces, dashes, and slashes (for example, 2015-11-17 - Hiseq-4/RDB102_TGCCTCAA), which caused issues when loading the data in R. These were replaced with underscores to create a consistent, R-friendly sample ID format. This cleaned sample ID was used as the main identifier to align the metadata and prevalence matrices.</p>
+<p>The resulting files included DA_metadata.csv, DA_counts_integer.csv, and DA_counts_relative.csv, along with DA_design_info.txt, which documents the final design formula and any data limitations. These files are the DA-ready versions that were later used in R for differential abundance analysis with tools such as DESeq2, MaAsLin2, ALDEx2, and ANCOM-II.</p>
+<p><strong>It is important to know that the filtered DA_metadata along with the DA_counts and DA integers contains only NAT vs T samples. Some of the NAT and T samples came from the same patients in the Nejman’s study . We call them as Paired patient which can be added as design in some DA tools so there is no paired Patient bias in the statistical analysis So the DA_metadata has both paired and unpaired NAT and T samples.</strong></p>
+</section>
+<section id="confounding-factor-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="confounding-factor-analysis">3.2.02 Confounding factor analysis</h3>
+<p>Confounding analysis was performed to identify variables that might bias the observed differences in bacterial abundance between tumor and NAT samples. This step is essential before running differential abundance analysis because certain technical or biological factors (like sequencing batch or center) can artificially influence results. After testing all available covariates using the script ,confounding_BC.ipynb, , we found that some were confounded and therefore excluded from the model. As a result, only Center and Group were used as fixed effects for downstream DA tools, while Patient_ID was included as a random effect in models that support random effects (such as MaAsLin2).</p>
+</section>
+</section>
+<section id="differential-abundance-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="differential-abundance-analysis">3.3 Differential Abundance Analysis</h2>
+<section id="deseq2" class="level3">
+<h3 class="anchored" data-anchor-id="deseq2">3.3.01 DESEq2</h3>
+<p>DESeq2 is a count-based tool originally developed for RNA-seq and is adapted for microbiome data. It handles overdispersion in counts, allows for covariate adjustment (such as Center), but cannot handle random effects (e.g., patient pairing).</p>
+<p>DESeq2 uses a <strong>negative binomial model</strong> for count data:</p>
+<p><span class="math display">\[
+K_{ij} \sim NB(\mu_{ij}, \alpha_i)
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(K_{ij}\)</span> is the observed count for feature <span class="math inline">\(i\)</span> in sample <span class="math inline">\(j\)</span></li>
+<li><span class="math inline">\(\mu_{ij}\)</span> is the expected mean</li>
+<li><span class="math inline">\(\alpha_{i}\)</span> is the dispersion parameter</li>
+</ul>
+<p>The <strong>design formula</strong> used was:</p>
+<p><span class="math display">\[
+\log(\mu_{ij}) = \beta_0 + \beta_{\text{Center}} + \beta_{\text{Group}}
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span> is the intercept<br>
+</li>
+<li><span class="math inline">\(\beta_{\text{Center}}\)</span> accounts for center-specific effects<br>
+</li>
+<li><span class="math inline">\(\beta_{\text{Group}}\)</span> tests the effect of <strong>Tumor vs NAT</strong>, the main variable of interest</li>
+</ul>
+<p><strong>Fixed Effects:</strong><br>
+All variables in the formula (~ Center + Group) are treated as fixed effects. DESeq2 estimates the effect of each variable, for example:</p>
+<ul>
+<li><p>How does being in NAT vs Tumor affect bacterial abundance ?</p></li>
+<li><p>How does being at Sheba vs Maccabi (center names ) affect abundance?</p></li>
+</ul>
+<p><strong>Why Patient_ID Was Not Included:</strong><br>
+There are too many Patient_ID levels (154 paired patients), leading to a “not full rank” error. DESeq2 cannot separate patient and group effects in a perfectly paired or mixed design.</p>
+<section id="load-the-data" class="level4">
+<h4 class="anchored" data-anchor-id="load-the-data">Load the Data</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DESeq2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load with check.names=FALSE to preserve sample IDs</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_metadata.csv"</span>, <span class="at">row.names=</span><span class="dv">1</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>counts_full <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_counts_integer.csv"</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate taxonomy from counts</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>taxonomy_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Prevalence in DNA extraction/NTC negative controls"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Prevalence in Paraf. Controls"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"BactID"</span>, <span class="st">"domain"</span>, <span class="st">"phylum"</span>, <span class="st">"class"</span>, <span class="st">"order"</span>, </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"family"</span>, <span class="st">"genus"</span>, <span class="st">"species"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> counts_full[, taxonomy_cols]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> counts_full[, <span class="sc">!</span><span class="fu">names</span>(counts_full) <span class="sc">%in%</span> taxonomy_cols]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(counts) <span class="ot">&lt;-</span> taxonomy<span class="sc">$</span>BactID</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="prepare-metadata" class="level4">
+<h4 class="anchored" data-anchor-id="prepare-metadata">Prepare Metadata</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set Group factor with Tumor as reference</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Group <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Group, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"Tumor"</span>, <span class="st">"NAT"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Center <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Center)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify alignment</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(<span class="fu">colnames</span>(counts), <span class="fu">rownames</span>(metadata))) {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"ERROR: Sample order doesn't match!"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We use tumor as reference when comparing NAT vs T</p>
+</section>
+<section id="creating-deseq2-object" class="level4">
+<h4 class="anchored" data-anchor-id="creating-deseq2-object">Creating DESeq2 object</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeqDataSetFromMatrix</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">countData =</span> counts,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">colData =</span> metadata,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="sc">~</span> Center <span class="sc">+</span> Group</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This design adjusts for Center effect before testing Group effect</p>
+</section>
+<section id="estimate-size-factors" class="level4">
+<h4 class="anchored" data-anchor-id="estimate-size-factors">Estimate Size factors</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">estimateSizeFactors</span>(dds, <span class="at">type=</span><span class="st">"poscounts"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Poscounts works with sparse data and the deseq’s default method - geometric mean fails with it. poscounts uses modified geometric mean that handles zeros in microbome data.</p>
+</section>
+<section id="run-deseq" class="level4">
+<h4 class="anchored" data-anchor-id="run-deseq">Run DESEQ</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeq</span>(dds)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This performs</p>
+<ol type="1">
+<li><p>Size factor normalization</p></li>
+<li><p>Dispersion estimation (gene-wise, then shrinkage)</p></li>
+<li><p>Negative binomial GLM fitting</p></li>
+<li><p>Wald test for significance</p></li>
+</ol>
+</section>
+<section id="extract-results" class="level4">
+<h4 class="anchored" data-anchor-id="extract-results">Extract Results</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">contrast=</span><span class="fu">c</span>(<span class="st">"Group"</span>, <span class="st">"NAT"</span>, <span class="st">"Tumor"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>Format: <code>c("variable", "numerator", "denominator")</code></li>
+</ul>
+<!-- -->
+<ul>
+<li><code>c("Group", "NAT", "Tumor")</code> = NAT vs Tumor</li>
+</ul>
+<!-- -->
+<ul>
+<li>log2FC &gt; 0 = higher in NAT</li>
+</ul>
+<!-- -->
+<ul>
+<li>log2FC &lt; 0 = higher in Tumor</li>
+</ul>
+</section>
+<section id="process-results" class="level4">
+<h4 class="anchored" data-anchor-id="process-results">Process results</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>results_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(res)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>results_df<span class="sc">$</span>BactID <span class="ot">&lt;-</span> <span class="fu">rownames</span>(results_df)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>results_final <span class="ot">&lt;-</span> <span class="fu">merge</span>(results_df, taxonomy, <span class="at">by=</span><span class="st">"BactID"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>results_final <span class="ot">&lt;-</span> results_final[<span class="fu">order</span>(results_final<span class="sc">$</span>pvalue), ]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># All results</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(results_final, <span class="st">"deseq2_results.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Significant only</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>sig_005 <span class="ot">&lt;-</span> results_final[results_final<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(results_final<span class="sc">$</span>padj), ]</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>sig_010 <span class="ot">&lt;-</span> results_final[results_final<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.1</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(results_final<span class="sc">$</span>padj), ]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_005) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_005, <span class="st">"deseq2_significant_padj005.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_010) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_010, <span class="st">"deseq2_significant_padj010.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="understanding-output" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-output">Understanding output</h3>
+<p><img src="images/clipboard-1244530020.png" class="img-fluid"></p>
+<p><strong><code>baseMean</code></strong><br>
+Mean normalized count across all samples.<br>
+→ Higher values indicate more abundant bacteria.</p>
+<p><strong><code>log2FoldChange</code></strong><br>
+Log₂ fold change (NAT vs Tumor).<br>
+→ Positive = enriched in NAT<br>
+→ Negative = enriched in Tumor<br>
+→ |2| = doubling/halving</p>
+<p><strong><code>lfcSE</code></strong><br>
+Standard error of the log₂ fold change.<br>
+→ Smaller values mean a more precise estimate.</p>
+<p><strong><code>stat</code></strong><br>
+Wald test statistic.<br>
+→ Calculated as <code>log2FoldChange / lfcSE</code><br>
+→ Larger magnitude = stronger evidence for differential abundance.</p>
+<p><strong><code>pvalue</code></strong><br>
+Raw p-value.<br>
+→ Values &lt; 0.05 are typically considered significant.</p>
+<p><strong><code>padj</code></strong><br>
+Benjamini-Hochberg (BH) adjusted p-value.<br>
+→ &lt; 0.05 = significant after correcting for multiple testing</p>
+</section>
+<section id="maaslin2" class="level3">
+<h3 class="anchored" data-anchor-id="maaslin2">3.3.03 MaAsLin2</h3>
+<p>In MaAsLin , we can handle the patient pairing using random effect. MaAsLin uses a linear mixed model framework which can adjust for both the covariates and paired patient issue. This package used relative abudnance count.</p>
+</section>
+</section>
+<section id="statistical-framework" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-framework">Statistical Framework</h2>
+<p>MaAsLin2 fits a <strong>linear mixed model</strong> for each species:</p>
+<p><span class="math display">\[
+\log(\text{abundance}_{ij}) = \beta_0 + \beta_{\text{Center}} + \beta_{\text{Group}} + u_{\text{patient}} + \varepsilon
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_{\text{Center}}\)</span>, <span class="math inline">\(\beta_{\text{Group}}\)</span>: fixed effects (including Center and Group/Tumor status)</li>
+<li><span class="math inline">\(u_{\text{patient}}\)</span>: random effect for patient-specific variation (accounts for pairing)</li>
+<li><span class="math inline">\(\varepsilon\)</span>: residual error</li>
+</ul>
+<section id="misc-fixed-effect-and-random-effect" class="level3">
+<h3 class="anchored" data-anchor-id="misc-fixed-effect-and-random-effect">Misc: Fixed effect and Random effect</h3>
+<p><strong>Fixed effects</strong> are These are the <strong>systematic variables</strong> the ones whose specific effects you <em>want to estimate or test</em>.</p>
+<p>In the above formula, <strong>Center</strong> controls for <em>batch effects or site differences</em>.</p>
+<ul>
+<li><p>Example question: <em>Do samples from different hospitals show systematic differences in abundance due to lab or sequencing variation?</em></p>
+<p><strong>Group</strong> Tests the biological contrast of interest (Tumor vs NAT).</p>
+<p>Example question: <em>Is this bacterium more abundant in tumor tissue than in NAT tissue?</em></p></li>
+</ul>
+<p>So, fixed effects represent <strong>predictors with consistent, reproducible influence</strong> across your dataset — they’re not random noise; they’re what you actually <em>want to measure</em></p>
+<p><strong>Random effects</strong> accounts for <strong>random variability</strong> that you <em>don’t want to test directly</em> but <em>must control for</em>, especially in paired or repeated-measures designs</p>
+<p>This is because conceptually , each patient contribute two samples as they are paired designs (NAT + T). Now obviously, these two tissue samples from the same patient would be more similar to each other than to other patients samples. This similarity violtaes the assumption of independent samples.</p>
+<p>So, models like MaAsLin adds a random intercept per patient which means that every patient now has their own baseline abundance level. The model doesn’t care <em>which</em> patient has which intercept ,it only cares about the <em>variance</em> among patients (σ²_patient). This “absorbs” the within-patient correlation, preventing it from inflating your fixed-effect estimates.</p>
+<section id="load-data" class="level4">
+<h4 class="anchored" data-anchor-id="load-data">Load data</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Maaslin2)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_metadata.csv"</span>, <span class="at">row.names=</span><span class="dv">1</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>counts_full <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_counts_relative.csv"</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate taxonomy</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>taxonomy_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Prevalence in DNA extraction/NTC negative controls"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Prevalence in Paraf. Controls"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"BactID"</span>, <span class="st">"domain"</span>, <span class="st">"phylum"</span>, <span class="st">"class"</span>, <span class="st">"order"</span>, </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"family"</span>, <span class="st">"genus"</span>, <span class="st">"species"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> counts_full[, taxonomy_cols]</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> counts_full[, <span class="sc">!</span><span class="fu">names</span>(counts_full) <span class="sc">%in%</span> taxonomy_cols]</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(counts) <span class="ot">&lt;-</span> taxonomy<span class="sc">$</span>BactID</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="prepare-metadata-1" class="level4">
+<h4 class="anchored" data-anchor-id="prepare-metadata-1">Prepare Metadata</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Group <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Group, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"Tumor"</span>, <span class="st">"NAT"</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Center <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Center)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Patient_ID <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Patient_ID)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="transpose-data" class="level4">
+<h4 class="anchored" data-anchor-id="transpose-data">Transpose Data</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MaAsLin2 needs: rows=samples, columns=taxa</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>counts_transposed <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(counts))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify alignment</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Sample alignment check: %s</span><span class="sc">\n</span><span class="st">"</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ifelse</span>(<span class="fu">all</span>(<span class="fu">rownames</span>(counts_transposed) <span class="sc">==</span> <span class="fu">rownames</span>(metadata)), </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"✓ OK"</span>, <span class="st">"✗ FAILED"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Maaslin requries samples as rows and features as columns hence we transpose it.</p>
+</section>
+<section id="run-maaslin" class="level4">
+<h4 class="anchored" data-anchor-id="run-maaslin">Run MaasLin</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit_data <span class="ot">&lt;-</span> <span class="fu">Maaslin2</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">input_data =</span> counts_transposed,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">input_metadata =</span> metadata,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">"maaslin2_output"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_abundance =</span> <span class="fl">0.0</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_prevalence =</span> <span class="fl">0.0</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_variance =</span> <span class="fl">0.0</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">normalization =</span> <span class="st">"NONE"</span>,          <span class="co"># Already relative abundances</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">transform =</span> <span class="st">"LOG"</span>,                <span class="co"># Log transformation for linear model</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis_method =</span> <span class="st">"LM"</span>,           <span class="co"># Linear model</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_significance =</span> <span class="fl">0.25</span>,          <span class="co"># Report if qval &lt; 0.25</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">random_effects =</span> <span class="fu">c</span>(<span class="st">"Patient_ID"</span>), <span class="co"># ← HANDLES PAIRING</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">fixed_effects =</span> <span class="fu">c</span>(<span class="st">"Center"</span>, <span class="st">"Group"</span>),</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">correction =</span> <span class="st">"BH"</span>,                <span class="co"># Benjamini-Hochberg FDR</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">standardize =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">cores =</span> <span class="dv">1</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_heatmap =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">heatmap_first_n =</span> <span class="dv">50</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot_scatter =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_pngs =</span> <span class="dv">10</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_scatter =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_models =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">reference =</span> <span class="st">"Group,Tumor"</span>         <span class="co"># Tumor as reference</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We put normlization as None because data is already relative abundance so , we dont re-normlaize. We add Patient ID as random effect to account for pairing.</p>
+</section>
+<section id="extract-result" class="level4">
+<h4 class="anchored" data-anchor-id="extract-result">Extract Result</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MaAsLin2 outputs results for ALL fixed effects (Group AND Center)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to Group only for main results</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"maaslin2_output/all_results.tsv"</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>group_only <span class="ot">&lt;-</span> results[results<span class="sc">$</span>metadata <span class="sc">==</span> <span class="st">"Group"</span>, ]</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(group_only, <span class="st">"maaslin2_group_only_results.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Significant only</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>sig_results <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"maaslin2_output/significant_results.tsv"</span>, <span class="at">sep=</span><span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>sig_group_only <span class="ot">&lt;-</span> sig_results[sig_results<span class="sc">$</span>metadata <span class="sc">==</span> <span class="st">"Group"</span>, ]</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sig_group_only, <span class="st">"maaslin2_group_significant.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As fixed effect it output for both center and group effect. Since we are only focused on group effect that is NAT vs T , we filter it.</p>
+</section>
+<section id="understanding-output-1" class="level4">
+<h4 class="anchored" data-anchor-id="understanding-output-1">Understanding output</h4>
+<p><img src="images/clipboard-2193975865.png" class="img-fluid"></p>
+<p><code>feature</code> | Bacterial taxon (BactID) | Which bacteria</p>
+<p><code>metadata</code> | Variable tested | “Group” or “Center”</p>
+<p><code>value</code> | Specific level being compared | “NAT” (vs reference “Tumor”)</p>
+<p><code>coef</code> | Effect size (coefficient) | How much higher/lower in NAT vs Tumor</p>
+<p><code>stderr</code> | Standard error | Uncertainty of estimate</p>
+<p><code>pval</code> | P-value | Statistical significance</p>
+<p><code>qval</code> | FDR-adjusted q-value | Multiple testing corrected</p>
+<p><code>N</code> | Sample size | Number of samples in analysis</p>
+<p><code>N.not.0</code> | Non-zero samples | How many samples had this bacteria</p>
+</section>
+</section>
+<section id="aldex2" class="level3">
+<h3 class="anchored" data-anchor-id="aldex2">3.3.03 ALDEx2</h3>
+<p>ALDEx2 is used to identify differentially abundant bacteria while explicitly addressing the compositionality problem in sequencing data.</p>
+<section id="the-compositionality-problem" class="level4">
+<h4 class="anchored" data-anchor-id="the-compositionality-problem">The compositionality problem</h4>
+<p>Because sequencing provides relative, not absolute, abundances, all taxa are constrained to sum to one. A change in one taxon therefore alters the proportions of others, creating a compositionality problem that traditional statistical models cannot handle properly.</p>
+<p>To address this, ALDEx2 models the observed count data as one possible realization of a Dirichlet–multinomial distribution and performs Monte Carlo sampling to account for technical uncertainty. For each sample, it generates multiple simulated instances (typically 128), each representing a plausible composition of counts. Each simulated instance is then transformed using the centered log-ratio (CLR) transformation:</p>
+<p>The centered log-ratio (CLR) transformation is defined as:</p>
+<p><span class="math display">\[
+\mathrm{CLR}(x_i) = \log \left( \frac{x_i}{\text{geometric mean of all } x_i} \right )
+\]</span></p>
+<p>This transformation removes the unit-sum constraint and allows meaningful comparison of taxa across samples.</p>
+<p>ALDEx2 then performs statistical testing on each Monte Carlo instance usually Welch’s t-test for two-group comparisons such as Tumor vs NAT and computes corresponding effect sizes. These results are averaged across all instances to produce robust estimates of fold change and significance that incorporate sequencing uncertainty.</p>
+<p>When covariates (e.g., Center) need to be included, ALDEx2 uses a generalized linear model of the form.</p>
+<p>The CLR-transformed abundance is modeled as:</p>
+<p><span class="math display">\[
+\mathrm{CLR}(\text{abundance}) = \beta_0 + \beta_{\text{Center}} + \beta_{\text{Group}}
+\]</span></p>
+<p>fitted separately to each Monte Carlo instance, with coefficients averaged afterward.</p>
+<p>Input data must be <strong>integer count matrices</strong> (features × samples), not relative abundances, because the Dirichlet-multinomial model requires count-like data. ALDEx2 therefore typically uses files such as <code>DA_counts_integer.csv</code> and <code>DA_metadata.csv</code>.</p>
+</section>
+<section id="load-data-1" class="level4">
+<h4 class="anchored" data-anchor-id="load-data-1">Load Data</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ALDEx2)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_metadata.csv"</span>, <span class="at">row.names=</span><span class="dv">1</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>counts_full <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_counts_integer.csv"</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate taxonomy</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>taxonomy_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Prevalence in DNA extraction/NTC negative controls"</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Prevalence in Paraf. Controls"</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"BactID"</span>, <span class="st">"domain"</span>, <span class="st">"phylum"</span>, <span class="st">"class"</span>, <span class="st">"order"</span>, </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"family"</span>, <span class="st">"genus"</span>, <span class="st">"species"</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> counts_full[, taxonomy_cols]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> counts_full[, <span class="sc">!</span><span class="fu">names</span>(counts_full) <span class="sc">%in%</span> taxonomy_cols]</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(counts) <span class="ot">&lt;-</span> taxonomy<span class="sc">$</span>BactID</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="prepare-metadata-2" class="level4">
+<h4 class="anchored" data-anchor-id="prepare-metadata-2">Prepare Metadata</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Group <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Group, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"Tumor"</span>, <span class="st">"NAT"</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Center <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Center)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify alignment</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(<span class="fu">colnames</span>(counts), <span class="fu">rownames</span>(metadata))) {</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"ERROR: Sample order doesn't match!"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="create-model-matrixfor-glm-with-center-adjustment" class="level4">
+<h4 class="anchored" data-anchor-id="create-model-matrixfor-glm-with-center-adjustment">Create Model Matrix(for GLM with Center adjustment)</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mm <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> Center <span class="sc">+</span> Group, <span class="at">data =</span> metadata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This converts factors into numeric design matrix used for GLM regression.</p>
+</section>
+<section id="run-aldex" class="level4">
+<h4 class="anchored" data-anchor-id="run-aldex">Run Aldex</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>aldex_clr <span class="ot">&lt;-</span> <span class="fu">aldex.clr</span>(counts, mm, <span class="at">mc.samples=</span><span class="dv">128</span>, <span class="at">denom=</span><span class="st">"all"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li><code>counts</code> = integer count matrix</li>
+</ul>
+<!-- -->
+<ul>
+<li><code>mm</code> = model matrix (for GLM)</li>
+</ul>
+<!-- -->
+<ul>
+<li><p><code>mc.samples=128</code> = number of Monte Carlo instances</p></li>
+<li><p><code>denom="all"</code> = use geometric mean of all features for CLR</p></li>
+</ul>
+<p>What the code does:</p>
+<ol type="1">
+<li><p>For each sample, draws 128 Dirichlet replicates (each sums to 1)</p></li>
+<li><p>Applies CLR transformation to each replicate</p></li>
+<li><p>Result: 128 CLR-transformed versions of each feature per sample</p></li>
+</ol>
+</section>
+<section id="run-glm-adjust-for-center" class="level4">
+<h4 class="anchored" data-anchor-id="run-glm-adjust-for-center">Run GLM (adjust for center)</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>aldex_glm <span class="ot">&lt;-</span> <span class="fu">aldex.glm</span>(aldex_clr, mm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol type="1">
+<li><p>For each MC instance, fits GLM: <code>CLR ~ Center + Group</code></p></li>
+<li><p>Extracts coefficients for Group effect</p></li>
+<li><p>Averages coefficients across 128 instances</p></li>
+<li><p>Tests if Group coefficient significantly different from 0</p></li>
+</ol>
+</section>
+<section id="extract-result-1" class="level4">
+<h4 class="anchored" data-anchor-id="extract-result-1">Extract Result</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>aldex_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(aldex_glm)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>aldex_results<span class="sc">$</span>BactID <span class="ot">&lt;-</span> <span class="fu">rownames</span>(aldex_results)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract Group effect columns</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Column names: "GroupNAT.Est", "GroupNAT.pval", "GroupNAT.pval.padj"</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>aldex_results<span class="sc">$</span>coef_Group_adjusted <span class="ot">&lt;-</span> aldex_results<span class="sc">$</span>GroupNAT.Est</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>aldex_results<span class="sc">$</span>pval_Group <span class="ot">&lt;-</span> aldex_results<span class="sc">$</span>GroupNAT.pval</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>aldex_results<span class="sc">$</span>padj_Group <span class="ot">&lt;-</span> aldex_results<span class="sc">$</span>GroupNAT.pval.padj</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="merge-with-taxonomy-and-save" class="level4">
+<h4 class="anchored" data-anchor-id="merge-with-taxonomy-and-save">Merge with taxonomy and save</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>aldex_results_tax <span class="ot">&lt;-</span> <span class="fu">merge</span>(aldex_results, taxonomy, <span class="at">by=</span><span class="st">"BactID"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>aldex_results_tax <span class="ot">&lt;-</span> aldex_results_tax[<span class="fu">order</span>(aldex_results_tax<span class="sc">$</span>padj_Group), ]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(aldex_results_tax, <span class="st">"aldex2_glm_results.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Significant results</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>sig_005 <span class="ot">&lt;-</span> aldex_results_tax[aldex_results_tax<span class="sc">$</span>padj_Group <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">!</span><span class="fu">is.na</span>(aldex_results_tax<span class="sc">$</span>padj_Group), ]</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>sig_010 <span class="ot">&lt;-</span> aldex_results_tax[aldex_results_tax<span class="sc">$</span>padj_Group <span class="sc">&lt;</span> <span class="fl">0.1</span> <span class="sc">&amp;</span> </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                              <span class="sc">!</span><span class="fu">is.na</span>(aldex_results_tax<span class="sc">$</span>padj_Group), ]</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_005) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_005, <span class="st">"aldex2_glm_significant_padj005.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_010) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_010, <span class="st">"aldex2_glm_significant_padj010.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="understanding-output-2" class="level4">
+<h4 class="anchored" data-anchor-id="understanding-output-2">Understanding output</h4>
+<p><img src="images/clipboard-2313902738.png" class="img-fluid"></p>
+<p><code>GroupNAT.Est</code> | GLM coefficient for Group | Center-adjusted log-ratio difference (NAT vs Tumor)</p>
+<p><code>GroupNAT.SE</code> | Standard error | Uncertainty of coefficient</p>
+<p><code>GroupNAT.t.val</code> | T-statistic | <code>coef / SE</code></p>
+<p><code>GroupNAT.pval</code> | P-value | Significance of Group effect</p>
+<p><code>GroupNAT.pval.padj</code> | Adjusted p-value | FDR-corrected</p>
+</section>
+<section id="interpretation-example" class="level4">
+<h4 class="anchored" data-anchor-id="interpretation-example">Interpretation example:</h4>
+<p>GroupNAT.Est = 1.2 GroupNAT.pval.padj = 0.003</p>
+<p>Interpretation: - After adjusting for Center - After averaging across 128 Monte Carlo instances - This bacterium has <strong>1.2 units higher CLR-transformed abundance</strong> in NAT vs Tumor - Highly significant (padj &lt; 0.05) - Positive = enriched in NAT - Negative = enriched in Tumor</p>
+</section>
+</section>
+<section id="ancom-bc2" class="level3">
+<h3 class="anchored" data-anchor-id="ancom-bc2">3.3.04 ANCOM BC2</h3>
+<p>ANCOM-BC2 identifies differentially abundant bacteria through a bias-corrected log-linear modeling framework that accounts for both compositional effects and technical biases common in sequencing data. It improves on earlier methods like ANCOM by explicitly estimating and correcting for two major sources of bias sampling fraction bias and taxon-specific efficiency bias making it generally more powerful than ANCOM and less conservative than ALDEx2. ANCOM-BC2 can include covariates such as sequencing center but cannot handle random effects or paired designs.</p>
+<p>The first bias, <strong>sample-level bias</strong> (or sampling-fraction bias), arises because different samples capture different total fractions of the microbial community. Even if relative proportions between taxa remain constant, differences in DNA extraction efficiency or sequencing depth mean some samples contain far more total reads than others. ANCOM-BC2 corrects this by estimating a sample-specific normalization factor, δᵢ, that adjusts each sample’s counts to a common scale.</p>
+<p>The second bias, <strong>taxon-level bias</strong>, reflects the fact that some bacterial taxa are inherently harder to detect due to biological or technical properties for example, variation in cell wall lysis, GC content, or primer compatibility. These systematic detection differences are modeled through a taxon-specific bias term, νⱼ, which adjusts for consistent over- or under-representation across samples.</p>
+<p>Mathematically, the observed count for taxon <em>j</em> in sample <em>i</em> can be expressed as</p>
+<p><span class="math display">\[
+y_{ij} = \mathrm{true\_abundance}_{ij} \times \delta_i \times \nu_j
+\]</span></p>
+<p>ANCOM-BC2 estimates both bias terms (<span class="math inline">\(\delta_i\)</span> and <span class="math inline">\(\nu_j\)</span>) and removes them to recover bias-corrected abundances:</p>
+<p><span class="math display">\[
+\log(\mathrm{corrected\_abundance}_{ij}) = \log(y_{ij}) - \log(\delta_i) - \log(\nu_j)
+\]</span></p>
+<p>A bias-corrected log-linear model is then fitted to these corrected abundances:</p>
+<p><span class="math display">\[
+\log(\mathrm{corrected\_abundance}) = \beta_0 + \beta_{\text{Center}} + \beta_{\text{Group}}
+\]</span></p>
+<p>Here, <span class="math inline">\(\beta_{\text{Group}}\)</span> represents the estimated log fold-change between groups (e.g., Tumor vs NAT) <strong>after removing both sampling and taxon-specific biases</strong>.<br>
+The resulting lfc value provides a bias-adjusted measure of differential abundance, and statistical significance is assessed on this corrected scale.</p>
+<p>For input, ANCOM-BC2 requires integer count data with features (taxa) as rows and samples as columns, alongside a metadata data frame describing sample covariates. The standard input files are <code>DA_counts_integer.csv</code> and <code>DA_metadata.csv</code>.</p>
+<section id="load-data-2" class="level4">
+<h4 class="anchored" data-anchor-id="load-data-2">Load Data</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ANCOMBC)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>metadata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_metadata.csv"</span>, <span class="at">row.names=</span><span class="dv">1</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>counts_full <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"DA_counts_integer.csv"</span>, <span class="at">check.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate taxonomy</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>taxonomy_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Prevalence in DNA extraction/NTC negative controls"</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Prevalence in Paraf. Controls"</span>,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"BactID"</span>, <span class="st">"domain"</span>, <span class="st">"phylum"</span>, <span class="st">"class"</span>, <span class="st">"order"</span>, </span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"family"</span>, <span class="st">"genus"</span>, <span class="st">"species"</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>taxonomy <span class="ot">&lt;-</span> counts_full[, taxonomy_cols]</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> counts_full[, <span class="sc">!</span><span class="fu">names</span>(counts_full) <span class="sc">%in%</span> taxonomy_cols]</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(counts) <span class="ot">&lt;-</span> taxonomy<span class="sc">$</span>BactID</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="prepare-metadata-3" class="level4">
+<h4 class="anchored" data-anchor-id="prepare-metadata-3">Prepare Metadata</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Group <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Group, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"Tumor"</span>, <span class="st">"NAT"</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>metadata<span class="sc">$</span>Center <span class="ot">&lt;-</span> <span class="fu">factor</span>(metadata<span class="sc">$</span>Center)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify alignment</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">identical</span>(<span class="fu">colnames</span>(counts), <span class="fu">rownames</span>(metadata))) {</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">"ERROR: Sample order doesn't match!"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="run-ancom" class="level4">
+<h4 class="anchored" data-anchor-id="run-ancom">Run ANCOM</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ancombc2_result <span class="ot">&lt;-</span> <span class="fu">ancombc2</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> counts,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">assay_name =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">tax_level =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fix_formula =</span> <span class="st">"Group + Center"</span>,    <span class="co"># Fixed effects</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">rand_formula =</span> <span class="cn">NULL</span>,                <span class="co"># No random effects</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_adj_method =</span> <span class="st">"BH"</span>,                <span class="co"># Benjamini-Hochberg</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">pseudo_sens =</span> <span class="cn">TRUE</span>,                 <span class="co"># Sensitivity analysis</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prv_cut =</span> <span class="dv">0</span>,                        <span class="co"># No prevalence filter (already done)</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">lib_cut =</span> <span class="dv">0</span>,                        <span class="co"># No library size filter</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">s0_perc =</span> <span class="fl">0.05</span>,                     <span class="co"># Small constant for stability</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"Group"</span>,                    <span class="co"># Primary variable</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">struc_zero =</span> <span class="cn">FALSE</span>,                 <span class="co"># No structural zeros</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">neg_lb =</span> <span class="cn">FALSE</span>,                     <span class="co"># No negative lower bound</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="fl">0.05</span>,                       <span class="co"># Significance threshold</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_cl =</span> <span class="dv">1</span>,                           <span class="co"># Number of cores</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">global =</span> <span class="cn">FALSE</span>,                     <span class="co"># No global test</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">pairwise =</span> <span class="cn">FALSE</span>,                   <span class="co"># No pairwise (only 2 groups)</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">dunnet =</span> <span class="cn">FALSE</span>,                     <span class="co"># No Dunnett test</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">trend =</span> <span class="cn">FALSE</span>,                      <span class="co"># No trend test</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-2</span>, <span class="at">max_iter =</span> <span class="dv">20</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">em_control =</span> <span class="fu">list</span>(<span class="at">tol =</span> <span class="fl">1e-5</span>, <span class="at">max_iter =</span> <span class="dv">100</span>),</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">lme_control =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">mdfdr_control =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">trend_control =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">meta_data =</span> metadata</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="extract-result-2" class="level4">
+<h4 class="anchored" data-anchor-id="extract-result-2">Extract Result</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>results_df <span class="ot">&lt;-</span> ancombc2_result<span class="sc">$</span>res</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename taxon to BactID for merging</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>results_df<span class="sc">$</span>BactID <span class="ot">&lt;-</span> results_df<span class="sc">$</span>taxon</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge with taxonomy</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>results_tax <span class="ot">&lt;-</span> <span class="fu">merge</span>(results_df, taxonomy, <span class="at">by=</span><span class="st">"BactID"</span>, <span class="at">all.x=</span><span class="cn">TRUE</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by q-value</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>results_tax <span class="ot">&lt;-</span> results_tax[<span class="fu">order</span>(results_tax<span class="sc">$</span>q_GroupNAT), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="get-sigificant-results" class="level4">
+<h4 class="anchored" data-anchor-id="get-sigificant-results">Get sigificant results</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># By q-value thresholds</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>sig_005 <span class="ot">&lt;-</span> results_tax[results_tax<span class="sc">$</span>q_GroupNAT <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                       <span class="sc">!</span><span class="fu">is.na</span>(results_tax<span class="sc">$</span>q_GroupNAT), ]</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>sig_010 <span class="ot">&lt;-</span> results_tax[results_tax<span class="sc">$</span>q_GroupNAT <span class="sc">&lt;</span> <span class="fl">0.1</span> <span class="sc">&amp;</span> </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                       <span class="sc">!</span><span class="fu">is.na</span>(results_tax<span class="sc">$</span>q_GroupNAT), ]</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># By ANCOM-BC2 declaration (accounts for effect size)</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>sig_declared <span class="ot">&lt;-</span> results_tax[results_tax<span class="sc">$</span>diff_GroupNAT <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>                            <span class="sc">!</span><span class="fu">is.na</span>(results_tax<span class="sc">$</span>diff_GroupNAT), ]</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Robust significant (passed sensitivity analysis)</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>sig_robust <span class="ot">&lt;-</span> results_tax[results_tax<span class="sc">$</span>diff_robust_GroupNAT <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;</span> </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">!</span><span class="fu">is.na</span>(results_tax<span class="sc">$</span>diff_robust_GroupNAT), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="save-result" class="level4">
+<h4 class="anchored" data-anchor-id="save-result">Save result</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># All results</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(results_tax, <span class="st">"ancombc2_results.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Significant by q-value</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_005) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_005, <span class="st">"ancombc2_significant_q005.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_010) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_010, <span class="st">"ancombc2_significant_q010.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ANCOM-BC2 declared significant</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_declared) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_declared, <span class="st">"ancombc2_significant_declared.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Robust significant (most conservative)</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sig_robust) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write.csv</span>(sig_robust, <span class="st">"ancombc2_significant_robust.csv"</span>, <span class="at">row.names=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="understanding-the-output-file" class="level4">
+<h4 class="anchored" data-anchor-id="understanding-the-output-file">Understanding the output file</h4>
+<p><img src="images/clipboard-3221448154.png" class="img-fluid"></p>
+<p><code>taxon</code> | Bacterial taxon | Which bacteria</p>
+<p><code>lfc_GroupNAT</code> | Log fold change | Bias-corrected difference (NAT vs Tumor)&lt;br&gt;Positive = enriched in NAT</p>
+<p><code>se_GroupNAT</code> | Standard error | Uncertainty of LFC</p>
+<p><code>W_GroupNAT</code> | Wald statistic | <code>lfc / se</code>&lt;br&gt;Larger = stronger evidence</p>
+<p><code>p_GroupNAT</code> | P-value | Raw significance</p>
+<p><code>q_GroupNAT</code> | Q-value | FDR-adjusted (use this for significance)</p>
+<p><code>diff_GroupNAT</code> | Logical (TRUE/FALSE) | ANCOM-BC2’s declaration of significance</p>
+<p><code>passed_ss_GroupNAT</code> | Logical | Passed sample size filter?</p>
+<p><code>diff_robust_GroupNAT</code> | Logical | Robust to sensitivity analysis?&lt;br&gt;<strong>Most conservative</strong></p>
+<p><strong>Also includes:</strong></p>
+<ul>
+<li><p><code>lfc_(Intercept)</code> = baseline (Tumor at reference Center)</p>
+<p><code>lfc_CenterRambam</code>, <code>lfc_CenterSheba</code> = Center effects (adjustments)</p></li>
+</ul>
+<p><strong>Log Fold Change (lfc):</strong></p>
+<ul>
+<li><p><strong>lfc</strong> | <strong>Interpretation</strong> | <strong>Fold Change</strong></p>
+<p>+1 | 2× higher in NAT | 2</p>
+<p>-1 | 2× lower in NAT (2× higher in Tumor) | 0.5</p>
+<p>+2 | 4× higher in NAT | 4</p>
+<p>0 | No difference | 1</p></li>
+</ul>
+
+
+</section>
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

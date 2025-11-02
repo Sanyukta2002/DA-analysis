@@ -278,7 +278,12 @@ window.Quarto = {
 <section id="workflow" class="level1">
 <h1>3 Workflow</h1>
 <p>The main data that we will be working with in this study is the supplementary table titled <strong>Table S2. Normalized reads of all samples in study with clinical data.</strong><em>.</em></p>
-<p><img src="images/clipboard-1108813451.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/tableS2.png" class="img-fluid figure-img"></p>
+<figcaption>Table S2: Normalized reads of all samples in study with clinical data.</figcaption>
+</figure>
+</div>
 <p>This table is taken from Nejman et al.&nbsp;(2020) and contains the normalized read counts for all tumor and control samples along with their associated clinical information. Nejman’s study applied a six-stage filtering process to remove potential contaminants and batch-related artifacts; however, this version of Table S2 represents the data before any filtering was applied</p>
 <p>The table has two main sections. The upper part contains the clinical metadata for all samples in the study (such as sample ID, tissue type, patient information, sequencing batch, and clinical characteristics). The lower part contains the prevalence table for all taxa detected across samples, including their taxonomic classifications from domain down to species level.</p>
 <p>The row labeled “Total # normalized reads without general contaminants” represents the total normalized read count per sample <em>after</em> contamination filtering would be applied. However, in this table, the data are shown before filtering, meaning all reads are still included.</p>
@@ -484,7 +489,7 @@ There are too many Patient_ID levels (154 paired patients), leading to a “not 
 </section>
 <section id="understanding-output" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-output">Understanding output</h3>
-<p><img src="images/clipboard-1244530020.png" class="img-fluid"></p>
+<p><img src="images/deseq.png" class="img-fluid"></p>
 <p><strong><code>baseMean</code></strong><br>
 Mean normalized count across all samples.<br>
 → Higher values indicate more abundant bacteria.</p>
@@ -625,7 +630,7 @@ Benjamini-Hochberg (BH) adjusted p-value.<br>
 </section>
 <section id="understanding-output-1" class="level4">
 <h4 class="anchored" data-anchor-id="understanding-output-1">Understanding output</h4>
-<p><img src="images/clipboard-2193975865.png" class="img-fluid"></p>
+<p><img src="images/maaslin.png" class="img-fluid"></p>
 <p><code>feature</code> | Bacterial taxon (BactID) | Which bacteria</p>
 <p><code>metadata</code> | Variable tested | “Group” or “Center”</p>
 <p><code>value</code> | Specific level being compared | “NAT” (vs reference “Tumor”)</p>
@@ -768,7 +773,7 @@ Benjamini-Hochberg (BH) adjusted p-value.<br>
 </section>
 <section id="understanding-output-2" class="level4">
 <h4 class="anchored" data-anchor-id="understanding-output-2">Understanding output</h4>
-<p><img src="images/clipboard-2313902738.png" class="img-fluid"></p>
+<p><img src="images/aldex.png" class="img-fluid"></p>
 <p><code>GroupNAT.Est</code> | GLM coefficient for Group | Center-adjusted log-ratio difference (NAT vs Tumor)</p>
 <p><code>GroupNAT.SE</code> | Standard error | Uncertainty of coefficient</p>
 <p><code>GroupNAT.t.val</code> | T-statistic | <code>coef / SE</code></p>
@@ -924,7 +929,7 @@ The resulting lfc value provides a bias-adjusted measure of differential abundan
 </section>
 <section id="understanding-the-output-file" class="level4">
 <h4 class="anchored" data-anchor-id="understanding-the-output-file">Understanding the output file</h4>
-<p><img src="images/clipboard-3221448154.png" class="img-fluid"></p>
+<p><img src="images/ancom.png" class="img-fluid"></p>
 <p><code>taxon</code> | Bacterial taxon | Which bacteria</p>
 <p><code>lfc_GroupNAT</code> | Log fold change | Bias-corrected difference (NAT vs Tumor)&lt;br&gt;Positive = enriched in NAT</p>
 <p><code>se_GroupNAT</code> | Standard error | Uncertainty of LFC</p>

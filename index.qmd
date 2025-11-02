@@ -39,7 +39,7 @@ Based on these findings, we selected **ALDEx2** and **ANCOM-II**, which were ide
 
 The main data that we will be working with in this study is the supplementary table titled **Table S2. Normalized reads of all samples in study with clinical data.***.*
 
-![](images/clipboard-1108813451.png)
+![Table S2: Normalized reads of all samples in study with clinical data.](images/tableS2.png)
 
 This table is taken from Nejman et al. (2020) and contains the normalized read counts for all tumor and control samples along with their associated clinical information. Nejman’s study applied a six-stage filtering process to remove potential contaminants and batch-related artifacts; however, this version of Table S2 represents the data before any filtering was applied
 
@@ -290,7 +290,7 @@ if (nrow(sig_010) > 0) {
 
 ### Understanding output
 
-![](images/clipboard-1244530020.png)
+![](images/deseq.png)
 
 **`baseMean`**\
 Mean normalized count across all samples.\
@@ -464,7 +464,7 @@ As fixed effect it output for both center and group effect. Since we are only fo
 
 #### Understanding output
 
-![](images/clipboard-2193975865.png)
+![](images/maaslin.png)
 
 `feature` \| Bacterial taxon (BactID) \| Which bacteria
 
@@ -648,7 +648,7 @@ if (nrow(sig_010) > 0) {
 
 #### Understanding output
 
-![](images/clipboard-2313902738.png)
+![](images/aldex.png)
 
 `GroupNAT.Est` \| GLM coefficient for Group \| Center-adjusted log-ratio difference (NAT vs Tumor)
 
@@ -837,7 +837,7 @@ if (nrow(sig_robust) > 0) {
 
 #### Understanding the output file
 
-![](images/clipboard-3221448154.png)
+![](images/ancom.png)
 
 `taxon` \| Bacterial taxon \| Which bacteria
 
